@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
 import { IMyDpOptions } from 'mydatepicker';
-import { Schedule } from '../shared/models/schedule.model';
+import { Schedule, ScheduleSlot } from '../shared/models/schedule.model';
 import { ScheduleService } from './schedule.service';
 
 @Component({
@@ -14,14 +14,17 @@ import { ScheduleService } from './schedule.service';
 export class ScheduleComponent {
 
     displayPreview: boolean = false;
- 
+
 
     schedulesList: Schedule[] = [];
-    displaySlots:boolean = false;
+    createSlotsList: ScheduleSlot[] = [];
+    displaySlots: boolean = false;
+    displayAddSchedule: boolean = false;
 
 
     searchForm: FormGroup;
-    scheduleDatePickerOption: IMyDpOptions;
+    createForm: FormGroup;
+    createSlotForm: FormGroup;
 
     constructor(private service: ScheduleService, private confirmationService: ConfirmationService, private fb: FormBuilder) {
     }
@@ -42,6 +45,7 @@ export class ScheduleComponent {
             }
         ]
         this.initSarchForm();
+        this.initSlot();
     }
 
 
@@ -51,38 +55,83 @@ export class ScheduleComponent {
             dateValue: [null, Validators.required],
             localDate: [null],
         });
+
+        this.createForm = this.fb.group({
+            studioName: [null, Validators.required],
+            dateValue: [null, Validators.required],
+            localDate: [null],
+            studioScheduleSlotList: []
+        });
+
     }
 
-   
-
-    // confirmSubmit() {
-    //     this.confirmationService.confirm({
-    //         message: 'Are you sure that you want to save the schedule',
-    //         accept: () => {
-    //             // this.submitted = true;
-    //         }
-    //     });
-    // }
-
-
-    prepareDateJson(date: any) {
-        let yearL = this.getDate(date).getFullYear();
-        let monthL = this.getDate(date).getMonth() + 1;
-        let dayL = this.getDate(date).getDate();
-        let dateJson = {
-            date: { year: yearL, month: monthL, day: dayL },
-            formatted: yearL + "-" + (monthL > 9 ? monthL : "0" + monthL) + "-" + (dayL > 9 ? dayL : "0" + dayL)
-        };
-        return dateJson;
+    initSlot() {
+        this.createSlotForm = this.fb.group({
+            startTimeValue: [null, Validators.required],
+            startTime: [null],
+            endTime: [null],
+            endTimeValue: [null, Validators.required],
+            faculty: [null, Validators.required],
+            assignerName: [null, Validators.required]
+        });
     }
 
-    getDate(millis): Date {
-        return millis ? new Date(millis) : null;
+
+
+    confirmScheduleDelete() {
+        this.confirmationService.confirm({
+            message: 'Are you sure that you want to DELETE the schedule',
+            accept: () => {
+                // this.submitted = true;
+            }
+        });
     }
 
-    scheduleObj:any;
-    displaySlotsFn(schedule){
+    prepareDateStringFromObject(date: any) {
+        return date.year + "-" + (date.month > 9 ? date.month : "0" + date.month) + "-" + (date.day > 9 ? date.day : "0" + date.day)
+    }
+    prepareTimeStringFromObject(date: any) {
+        return (date.hour > 9 ? date.hour : "0"+date.hour) + ":" + (date.minute > 9 ? date.minute : "0" + date.minute) + ":" + (date.second > 9 ? date.second : "0" + date.second)
+    }
+
+    prepareDateObjectFromString(date: any) {
+        let dtArr = date.split("-");
+        return {year:dtArr[0], month:dtArr[1], day:dtArr[2]}
+    }
+
+    searchSchedules() {
+        console.log(this.searchForm.value)
+        let localDate = this.prepareDateStringFromObject(this.searchForm.controls['dateValue'].value);
+        this.searchForm.controls['localDate'].patchValue(localDate);
+        console.log(this.searchForm.value);
+        this.service.getSchedules(this.searchForm.value).subscribe(resData =>{
+            console.log(resData);
+        })
+    }
+
+
+    scheduleObj: any;
+    displaySlotsFn(schedule) {
         this.displaySlots = true;
         this.scheduleObj = schedule;
+    }
+
+    addSchedule() {
+        this.displayAddSchedule = true;
+    }
+
+    addRowInSlots(body) {
+        body.startTime = this.prepareTimeStringFromObject(body.startTimeValue);
+        body.endTime = this.prepareTimeStringFromObject(body.endTimeValue);
+        this.createSlotsList.push(body);
+        this.initSlot();
+    }
+
+    deleteRowInSlots(body) {
+
+    }
+
+    saveSchedule() {
+        this.displayAddSchedule = false;
     }
 }

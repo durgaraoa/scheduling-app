@@ -10,6 +10,9 @@
 </section>
 
 <section>
+  <div class="col-md-12 float-right">
+    <button type="button" (click)="addSchedule()" class="btn btn-success mb-2">Add Schedule</button>
+  </div>
   <div class="card bg-light">
     <div class="card-body">
       <form [formGroup]="searchForm" class="form-inline">
@@ -19,7 +22,12 @@
         </div>
         <div class="form-group mx-sm-3 mb-2">
           <label class="sr-only">Date</label>
-          <p-calendar placeholder="date" dateFormat="yy-mm-dd" formControlName="dateValue"></p-calendar>
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="dateValue" ngbDatepicker #d="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+            </div>
+          </div>
         </div>
         <button type="button" (click)="searchSchedules()" class="btn btn-primary mb-2" [disabled]="searchForm.invalid">Search</button>
       </form>
@@ -35,6 +43,7 @@
             <th scope="col">Studio Name</th>
             <th scope="col">Slots</th>
             <th scope="col">Action</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody *ngFor="let item of schedulesList;index as i">
@@ -44,6 +53,7 @@
             <td>{{item.studioName}}</td>
             <td><a href="javascript:void(0);" (click)="displaySlotsFn(item)">{{item.studioScheduleSlotList?.length}}</a></td>
             <td><a href="javascript:void(0);">Edit</a></td>
+            <td><a href="javascript:void(0);" (click)="confirmScheduleDelete()">Delete</a></td>
           </tr>
         </tbody>
       </table>
@@ -78,6 +88,92 @@
     </div>
     <p-footer>
       <button class="btn btn-sm btn-danger" (click)="displaySlots=false">Close</button>
+    </p-footer>
+  </p-dialog>
+</section>
+
+<!-- Add Schedule -->
+<section>
+  <p-dialog header="Add Schedule" [(visible)]="displayAddSchedule" [modal]="true" [responsive]="true" [style]="{width: '1000px', hight:'300px'}"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <form>
+      <div class="row" [formGroup]="createForm">
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Studio Name</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" formControlName="studioName" placeholder="Example input">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Date</label>
+            <br>
+            <p-calendar placeholder="date" dateFormat="yy-mm-dd" formControlName="dateValue"></p-calendar>
+          </div>
+        </div>
+      </div>
+      <h4>Slots:</h4>
+      <hr>
+      <table class="table" *ngIf="createSlotsList.length > 0">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">End Time</th>
+            <th scope="col">Faculty</th>
+            <th scope="col">Assigner Name</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of createSlotsList;index as i">
+          <tr>
+            <th scope="row">{{i+1}}</th>
+            <td>{{item.startTime}}</td>
+            <td>{{item.endTime}}</td>
+            <td>{{item.faculty}}</td>
+            <td>{{item.assignerName}}</td>
+            <td><a href="javascript:void(0);" (click)="deleteRowInSlots(item)">Remove</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row" [formGroup]="createSlotForm">
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Start Time</label>
+            <ngb-timepicker formControlName="startTimeValue" [seconds]="true"></ngb-timepicker>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">End Time</label>
+            <ngb-timepicker formControlName="endTimeValue" [seconds]="true"></ngb-timepicker>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Faculty</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" formControlName="faculty" placeholder="Faculty">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Assigner Name</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" formControlName="assignerName"
+              placeholder="AssignerName">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Action</label><br>
+            <button type="button" class="btn btn-primary" [disabled]="createSlotForm.invalid" (click)="addRowInSlots(createSlotForm.value)">Add</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <p-footer>
+      <button class="btn btn-sm btn-success" (click)="saveSchedule()" [disabled]="createForm.invalid || createSlotsList.length == 0">Save</button>
+      &nbsp;&nbsp;&nbsp;
+      <button class="btn btn-sm btn-danger" (click)="displayAddSchedule=false">Close</button>
     </p-footer>
   </p-dialog>
 </section>

@@ -10,6 +10,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { ChartModule } from 'primeng/primeng';
 import { ScheduleComponent } from './schedule.component';
+import {InputMaskModule} from 'primeng/inputmask';
+import {NgbDatepickerModule, NgbTimepickerModule} from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
     { path: '', component: ScheduleComponent }
@@ -28,7 +30,11 @@ const routes: Routes = [
         ChartModule,
         ConfirmDialogModule,
         MatGridListModule,
-        CalendarModule
+        CalendarModule,
+        InputMaskModule,
+        NgbDatepickerModule,
+        NgbTimepickerModule
+        
     ],
     declarations: [
         ScheduleComponent
