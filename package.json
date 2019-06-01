@@ -1,0 +1,47 @@
+{
+  "name": "scheduling-app",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "node server.js",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "postinstall": "ng build --prod"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^7.2.11",
+    "@angular/cdk": "^7.3.6",
+    "@angular/cli": "^6.0.3",
+    "@angular/common": "^7.2.0",
+    "@angular/compiler": "^7.2.0",
+    "@angular/core": "^7.2.0",
+    "@angular/forms": "^7.2.0",
+    "@angular/http": "^7.2.0",
+    "@angular/material": "^7.3.6",
+    "@angular/platform-browser": "^7.2.0",
+    "@angular/platform-browser-dynamic": "^7.2.0",
+    "@angular/router": "^7.2.0",
+    "bootstrap": "^4.3.1",
+    "chart.js": "^2.8.0",
+    "core-js": "^2.6.2",
+    "express": "^4.16.4",
+    "jquery": "^3.3.1",
+    "mydatepicker": "^2.6.6",
+    "path": "^0.12.7",
+    "primeng": "^7.1.0",
+    "rxjs": "^6.1.0",
+    "tslib": "^1.9.0",
+    "zone.js": "^0.8.27"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.12.0",
+    "@angular/cli": "^6.0.3",
+    "@angular/compiler-cli": "^7.2.0",
+    "@angular/language-service": "^7.2.0",
+    "typescript": "3.2.2"
+  }
+}

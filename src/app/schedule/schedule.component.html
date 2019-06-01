@@ -1,0 +1,83 @@
+<section>
+  <div class="welcome-page">
+    <div class="text-center">
+      <h3>Scheduling App</h3>
+    </div>
+  </div>
+</section>
+<section>
+  <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</section>
+
+<section>
+  <div class="card bg-light">
+    <div class="card-body">
+      <form [formGroup]="searchForm" class="form-inline">
+        <div class="form-group mb-2">
+          <label class="sr-only">Schedule Name</label>
+          <input type="text" class="form-control" formControlName="studioName" placeholder="name">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+          <label class="sr-only">Date</label>
+          <p-calendar placeholder="date" dateFormat="yy-mm-dd" formControlName="dateValue"></p-calendar>
+        </div>
+        <button type="button" (click)="searchSchedules()" class="btn btn-primary mb-2" [disabled]="searchForm.invalid">Search</button>
+      </form>
+    </div>
+  </div>
+  <div class="card bg-light">
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Studio Name</th>
+            <th scope="col">Slots</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of schedulesList;index as i">
+          <tr>
+            <th scope="row">{{i+1}}</th>
+            <td>{{item.date}}</td>
+            <td>{{item.studioName}}</td>
+            <td><a href="javascript:void(0);" (click)="displaySlotsFn(item)">{{item.studioScheduleSlotList?.length}}</a></td>
+            <td><a href="javascript:void(0);">Edit</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p-dialog header="Slots" [(visible)]="displaySlots" [modal]="true" [responsive]="true" [style]="{width: '1000px', hight:'300px'}"
+    [minY]="70" [maximizable]="true" [baseZIndex]="10000">
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">End Time</th>
+            <th scope="col">Faculty</th>
+            <th scope="col">Assigner Name</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of scheduleObj?.studioScheduleSlotList;index as i">
+          <tr>
+            <th scope="row">{{i+1}}</th>
+            <td>{{item.startTime}}</td>
+            <td>{{item.endTime}}</td>
+            <td>{{item.faculty}}</td>
+            <td>{{item.assignerName}}</td>
+            <td><a href="javascript:void(0);" (click)="displaySlotsFn(item)">Edit</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p-footer>
+      <button class="btn btn-sm btn-danger" (click)="displaySlots=false">Close</button>
+    </p-footer>
+  </p-dialog>
+</section>
