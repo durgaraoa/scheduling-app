@@ -11,4 +11,12 @@ export class ScheduleService {
      public getSchedules(body:any): Observable<any> {
         return this.http.post(this.hostIP + "/schedule/check", body);
     }
+
+     public saveSchedule(body:any): Observable<any> {
+        return this.http.post(this.hostIP + "/schedule", body);
+    }
+
+    public updateSchedule(body:any): Observable<any> {
+        return this.http.put(this.hostIP + "/schedule", body);
+    }
 }

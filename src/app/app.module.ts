@@ -4,6 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ScheduleModule } from './schedule/schedule.module';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -14,7 +16,9 @@ import { ScheduleModule } from './schedule/schedule.module';
     BrowserModule,
     AppRoutingModule,
     ScheduleModule,
-    HttpClientModule
+    HttpClientModule,
+    AngularFontAwesomeModule,
+    NgbModule
   ],
   bootstrap: [AppComponent]
 })

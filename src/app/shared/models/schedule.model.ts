@@ -1,4 +1,5 @@
 export class Schedule {
+    studioScheduleId:string;
     date:string;
     studioName:string;
     studioScheduleSlotList: Array<ScheduleSlot>;

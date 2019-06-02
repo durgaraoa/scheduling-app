@@ -13,14 +13,14 @@ import { ScheduleService } from './schedule.service';
 })
 export class ScheduleComponent {
 
-    displayPreview: boolean = false;
-
-
     schedulesList: Schedule[] = [];
     createSlotsList: ScheduleSlot[] = [];
     displaySlots: boolean = false;
     displayAddSchedule: boolean = false;
+    displayEditSchedule: boolean = false;
+    showSlotAdd: boolean = false;
 
+    scheduleObj: any;
 
     searchForm: FormGroup;
     createForm: FormGroup;
@@ -32,6 +32,7 @@ export class ScheduleComponent {
     ngOnInit() {
         this.schedulesList = [
             {
+                "studioScheduleId": "",
                 "date": "2019-01-28",
                 "studioName": "Studio-1",
                 "studioScheduleSlotList": [
@@ -53,13 +54,15 @@ export class ScheduleComponent {
         this.searchForm = this.fb.group({
             studioName: [null, Validators.required],
             dateValue: [null, Validators.required],
-            localDate: [null],
+            localDate: [null]
         });
 
         this.createForm = this.fb.group({
             studioName: [null, Validators.required],
+            studioScheduleId: [null],
             dateValue: [null, Validators.required],
             localDate: [null],
+            date: [null],
             studioScheduleSlotList: []
         });
 
@@ -78,11 +81,17 @@ export class ScheduleComponent {
 
 
 
-    confirmScheduleDelete() {
+    confirmScheduleDelete(index) {
         this.confirmationService.confirm({
             message: 'Are you sure that you want to DELETE the schedule',
             accept: () => {
-                // this.submitted = true;
+                this.schedulesList.splice(index, 1);
+                this.service.updateSchedule(this.schedulesList).subscribe(resData => {
+                    console.log(resData)
+                }, (error:any) => {
+                    console.log('oops', error)
+                    alert(error.statusText)
+                })
             }
         });
     }
@@ -91,12 +100,12 @@ export class ScheduleComponent {
         return date.year + "-" + (date.month > 9 ? date.month : "0" + date.month) + "-" + (date.day > 9 ? date.day : "0" + date.day)
     }
     prepareTimeStringFromObject(date: any) {
-        return (date.hour > 9 ? date.hour : "0"+date.hour) + ":" + (date.minute > 9 ? date.minute : "0" + date.minute) + ":" + (date.second > 9 ? date.second : "0" + date.second)
+        return (date.hour > 9 ? date.hour : "0" + date.hour) + ":" + (date.minute > 9 ? date.minute : "0" + date.minute) + ":" + (date.second > 9 ? date.second : "0" + date.second)
     }
 
     prepareDateObjectFromString(date: any) {
         let dtArr = date.split("-");
-        return {year:dtArr[0], month:dtArr[1], day:dtArr[2]}
+        return { year: Number(dtArr[0]), month: Number(dtArr[1]), day: Number(dtArr[2]) }
     }
 
     searchSchedules() {
@@ -104,13 +113,14 @@ export class ScheduleComponent {
         let localDate = this.prepareDateStringFromObject(this.searchForm.controls['dateValue'].value);
         this.searchForm.controls['localDate'].patchValue(localDate);
         console.log(this.searchForm.value);
-        this.service.getSchedules(this.searchForm.value).subscribe(resData =>{
+        this.service.getSchedules(this.searchForm.value).subscribe(resData => {
             console.log(resData);
+        }, (error:any) => {
+            console.log('oops', error)
+            alert(error.statusText)
         })
     }
 
-
-    scheduleObj: any;
     displaySlotsFn(schedule) {
         this.displaySlots = true;
         this.scheduleObj = schedule;
@@ -127,11 +137,69 @@ export class ScheduleComponent {
         this.initSlot();
     }
 
-    deleteRowInSlots(body) {
-
+    deleteRowInSlots(index) {
+        // this.confirmationService.confirm({
+        //     message: 'Are you sure that you want to DELETE the Slot',
+        //     accept: () => {
+        this.scheduleObj.studioScheduleSlotList.splice(index, 1);
+        //     }
+        // });
+        this.service.updateSchedule(this.scheduleObj).subscribe(resData =>{
+            console.log(resData);   
+        }, (error:any) => {
+            console.log('oops', error)
+            alert(error.statusText)
+        })
     }
 
     saveSchedule() {
+        this.createForm.controls['localDate'].patchValue(this.prepareDateStringFromObject(this.createForm.controls['dateValue'].value));
+        this.createForm.controls['studioScheduleSlotList'].patchValue(this.createSlotsList);
+        console.log(this.createForm.value)
         this.displayAddSchedule = false;
+        this.service.saveSchedule(this.createForm.value).subscribe(resData => {
+            console.log(resData);
+        }, (error:any) => {
+            console.log('oops', error)
+            alert(error.statusText)
+        })
     }
+
+    displayEditFn(item) {
+        this.displayEditSchedule = true;
+        this.scheduleObj = item;
+        this.createForm.controls['studioName'].patchValue(item.studioName);
+        this.createForm.controls['studioScheduleId'].patchValue(item.studioScheduleId);
+        if (item.date) {
+            console.log(this.prepareDateObjectFromString(item.date))
+            this.createForm.controls['dateValue'].patchValue(this.prepareDateObjectFromString(item.date));
+        }
+    }
+
+    updateSchedule() {
+        this.createForm.controls['date'].patchValue(this.prepareDateStringFromObject(this.createForm.controls['dateValue'].value));
+        this.createForm.controls['studioScheduleSlotList'].patchValue(this.scheduleObj.studioScheduleSlotList);
+        this.displayEditSchedule = false;
+        console.log(this.createForm.value)
+        this.service.updateSchedule(this.createForm.value).subscribe(resData => {
+            console.log(resData);
+        }, (error:any) => {
+            console.log('oops', error)
+            alert(error.statusText)
+        })
+    }
+
+    displayAddSlotFn() {
+        this.showSlotAdd = true;
+    }
+
+    addRowInAddSlots(body) {
+        body.startTime = this.prepareTimeStringFromObject(body.startTimeValue);
+        body.endTime = this.prepareTimeStringFromObject(body.endTimeValue);
+        this.scheduleObj.studioScheduleSlotList.push(body);
+        this.initSlot();
+        this.showSlotAdd = false;
+    }
+
+
 }
