@@ -90,7 +90,7 @@ export class ScheduleComponent {
                     console.log(resData)
                 }, (error:any) => {
                     console.log('oops', error)
-                    alert(error.statusText)
+                    alert("Server:" + error.statusText)
                 })
             }
         });
@@ -117,7 +117,7 @@ export class ScheduleComponent {
             console.log(resData);
         }, (error:any) => {
             console.log('oops', error)
-            alert(error.statusText)
+            alert("Server:" + error.statusText)
         })
     }
 
@@ -148,7 +148,7 @@ export class ScheduleComponent {
             console.log(resData);   
         }, (error:any) => {
             console.log('oops', error)
-            alert(error.statusText)
+            alert("Server:" + error.statusText)
         })
     }
 
@@ -157,11 +157,12 @@ export class ScheduleComponent {
         this.createForm.controls['studioScheduleSlotList'].patchValue(this.createSlotsList);
         console.log(this.createForm.value)
         this.displayAddSchedule = false;
+        this.schedulesList.push(this.createForm.value);
         this.service.saveSchedule(this.createForm.value).subscribe(resData => {
             console.log(resData);
         }, (error:any) => {
             console.log('oops', error)
-            alert(error.statusText)
+            alert("Server:" + error.statusText)
         })
     }
 
@@ -185,7 +186,7 @@ export class ScheduleComponent {
             console.log(resData);
         }, (error:any) => {
             console.log('oops', error)
-            alert(error.statusText)
+            alert("Server:" + error.statusText)
         })
     }
 
