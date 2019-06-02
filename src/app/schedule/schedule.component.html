@@ -24,9 +24,9 @@
         <div class="form-group mx-sm-3 mb-2">
           <label class="sr-only">Date</label>
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="dateValue" ngbDatepicker #d="ngbDatepicker">
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dSerach" formControlName="dateValue" ngbDatepicker #dSerach="ngbDatepicker">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+              <button class="btn btn-outline-secondary calendar" (click)="dSerach.toggle()" type="button"><i class="fa fa-calendar"></i></button>
             </div>
           </div>
         </div>
@@ -151,10 +151,10 @@
             <div class="form-group mx-sm-3 mb-2">
               <label class="sr-only">Date</label>
               <div class="input-group">
-                <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="dateValue"
-                  ngbDatepicker #d="ngbDatepicker">
+                <input class="form-control" placeholder="yyyy-mm-dd" name="dAdd" formControlName="dateValue"
+                  ngbDatepicker #dAdd="ngbDatepicker">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                  <button class="btn btn-outline-secondary calendar" (click)="dAdd.toggle()" type="button"><i class="fa fa-calendar"></i></button>
                 </div>
               </div>
             </div>
@@ -247,10 +247,10 @@
             <div class="form-group mx-sm-3 mb-2">
               <label class="sr-only">Date</label>
               <div class="input-group">
-                <input class="form-control" placeholder="yyyy-mm-dd" name="dp" formControlName="dateValue"
-                  ngbDatepicker #d="ngbDatepicker">
+                <input class="form-control" placeholder="yyyy-mm-dd" name="dupdate" formControlName="dateValue"
+                  ngbDatepicker #dupdate="ngbDatepicker">
                 <div class="input-group-append">
-                  <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i class="fa fa-calendar"></i></button>
+                  <button class="btn btn-outline-secondary calendar" (click)="dupdate.toggle()" type="button"><i class="fa fa-calendar"></i></button>
                 </div>
               </div>
             </div>
