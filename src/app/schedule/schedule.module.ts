@@ -12,6 +12,7 @@ import { ChartModule } from 'primeng/primeng';
 import { ScheduleComponent } from './schedule.component';
 import {InputMaskModule} from 'primeng/inputmask';
 import {NgbDatepickerModule, NgbTimepickerModule} from '@ng-bootstrap/ng-bootstrap';
+import {ToastModule} from 'primeng/toast';
 
 const routes: Routes = [
     { path: '', component: ScheduleComponent }
@@ -33,7 +34,8 @@ const routes: Routes = [
         CalendarModule,
         InputMaskModule,
         NgbDatepickerModule,
-        NgbTimepickerModule
+        NgbTimepickerModule,
+        ToastModule
         
     ],
     declarations: [

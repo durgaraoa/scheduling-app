@@ -14,27 +14,29 @@
     <button type="button" (click)="addSchedule()" class="btn btn-success mb-2"><i class="fa fa-plus" title="Edit"></i>
       Add Schedule</button>
   </div>
-  <div class="card bg-light">
+  <div class="card bg-light border-secondary">
     <div class="card-body">
       <form [formGroup]="searchForm" class="form-inline">
         <div class="form-group mb-2">
           <label class="sr-only">Schedule Name</label>
-          <input type="text" class="form-control" formControlName="studioName" placeholder="name">
+          <input type="text" class="form-control" formControlName="studioName" placeholder="Studio Name">
         </div>
         <div class="form-group mx-sm-3 mb-2">
           <label class="sr-only">Date</label>
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd" name="dSerach" formControlName="dateValue" ngbDatepicker #dSerach="ngbDatepicker">
+            <input class="form-control" placeholder="Date(yyyy-mm-dd)" name="dSerach" formControlName="dateValue" ngbDatepicker #dSerach="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary calendar" (click)="dSerach.toggle()" type="button"><i class="fa fa-calendar"></i></button>
             </div>
           </div>
         </div>
         <button type="button" (click)="searchSchedules()" class="btn btn-primary mb-2" [disabled]="searchForm.invalid">Search</button>
+        &nbsp;&nbsp;
+        <button type="button" (click)="resetSearch()" class="btn btn-danger mb-2" >Reset</button>
       </form>
     </div>
   </div>
-  <div class="card bg-light">
+  <div class="card bg-light border-secondary">
     <div class="card-body">
       <table class="table">
         <thead>
@@ -47,17 +49,20 @@
             <!-- <th scope="col"></th> -->
           </tr>
         </thead>
-        <tbody *ngFor="let item of schedulesList;index as i">
+        <tbody *ngFor="let item of searchSchedulesResultsList;index as i;index as in;">
           <tr>
             <th scope="row">{{i+1}}</th>
             <td>{{item.date}}</td>
             <td>{{item.studioName}}</td>
             <td><a href="javascript:void(0);" (click)="displaySlotsFn(item)">{{item.studioScheduleSlotList?.length}}</a></td>
-            <td><a href="javascript:void(0);" (click)="displayEditFn(item)"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
+            <td><a href="javascript:void(0);" (click)="displayEditFn(item, in)"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
               <a href="javascript:void(0);" (click)="confirmScheduleDelete(item)"><i class="fa fa-trash"></i></a></td>
             <!-- <td></td> -->
           </tr>
         </tbody>
+        <div class="text-center" *ngIf="noDataMsg">
+          <span><b><font color="red">No records available</font></b></span>
+        </div>
       </table>
     </div>
   </div>
@@ -93,28 +98,29 @@
       </table>
     </div>
     <form *ngIf="showSlotAdd">
+    <hr>
     <div class="row" [formGroup]="createSlotForm">
       <div class="col">
         <div class="form-group">
-          <label for="formGroupExampleInput">Start Time</label>
+          <label for="formGroupExampleInput"><b>Start Time</b></label>
           <ngb-timepicker formControlName="startTimeValue" [seconds]="true"></ngb-timepicker>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
-          <label for="formGroupExampleInput">End Time</label>
+          <label for="formGroupExampleInput"><b>End Time</b></label>
           <ngb-timepicker formControlName="endTimeValue" [seconds]="true"></ngb-timepicker>
         </div>
       </div>
       <div class="col">
         <div class="form-group">
-          <label for="formGroupExampleInput">Faculty</label>
+          <label for="formGroupExampleInput"><b>Faculty</b></label>
           <input type="text" class="form-control" id="formGroupExampleInput" formControlName="faculty" placeholder="Faculty">
         </div>
       </div>
       <div class="col">
         <div class="form-group">
-          <label for="formGroupExampleInput">Assigner Name</label>
+          <label for="formGroupExampleInput"><b>Assigner Name</b></label>
           <input type="text" class="form-control" id="formGroupExampleInput" formControlName="assignerName" placeholder="AssignerName">
         </div>
       </div>
@@ -127,7 +133,7 @@
     </div>
     </form>
     <p-footer>
-      <button class="btn btn-sm btn-danger" (click)="displaySlots=false">Close</button>
+      <button class="btn btn-sm btn-danger" (click)="displaySlots=false;resetSlotCreation()">Close</button>
     </p-footer>
   </p-dialog>
 </section>
@@ -151,7 +157,7 @@
             <div class="form-group mx-sm-3 mb-2">
               <label class="sr-only">Date</label>
               <div class="input-group">
-                <input class="form-control" placeholder="yyyy-mm-dd" name="dAdd" formControlName="dateValue"
+                <input class="form-control" placeholder="Date(yyyy-mm-dd)" name="dAdd" formControlName="dateValue"
                   ngbDatepicker #dAdd="ngbDatepicker">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary calendar" (click)="dAdd.toggle()" type="button"><i class="fa fa-calendar"></i></button>
@@ -161,7 +167,7 @@
           </div>
         </div>
       </div>
-      <h4>Slots:</h4>
+      <h6><b>Add Slots:</b></h6>
       <hr>
       <table class="table" *ngIf="createSlotsList.length > 0">
         <thead>
@@ -188,25 +194,25 @@
       <div class="row" [formGroup]="createSlotForm">
         <div class="col">
           <div class="form-group">
-            <label for="formGroupExampleInput">Start Time</label>
+            <label for="formGroupExampleInput"><b>Start Time</b></label>
             <ngb-timepicker formControlName="startTimeValue" [seconds]="true"></ngb-timepicker>
           </div>
         </div>
         <div class="col">
           <div class="form-group">
-            <label for="formGroupExampleInput">End Time</label>
+            <label for="formGroupExampleInput"><b>End Time</b></label>
             <ngb-timepicker formControlName="endTimeValue" [seconds]="true"></ngb-timepicker>
           </div>
         </div>
         <div class="col">
           <div class="form-group">
-            <label for="formGroupExampleInput">Faculty</label>
+            <label for="formGroupExampleInput"><b>Faculty</b></label>
             <input type="text" class="form-control" id="formGroupExampleInput" formControlName="faculty" placeholder="Faculty">
           </div>
         </div>
         <div class="col">
           <div class="form-group">
-            <label for="formGroupExampleInput">Assigner Name</label>
+            <label for="formGroupExampleInput"><b>Assigner Name</b></label>
             <input type="text" class="form-control" id="formGroupExampleInput" formControlName="assignerName"
               placeholder="AssignerName">
           </div>
@@ -220,7 +226,7 @@
       </div>
     </form>
     <p-footer>
-      <button class="btn btn-sm btn-success" (click)="saveSchedule()" [disabled]="createForm.invalid || createSlotsList.length == 0">Save</button>
+      <button class="btn btn-sm btn-success" (click)="saveSchedule()" [disabled]="createForm.controls['dateValue'].invalid || createForm.controls['studioName'].invalid || createSlotsList.length == 0">Save</button>
       &nbsp;&nbsp;&nbsp;
       <button class="btn btn-sm btn-danger" (click)="displayAddSchedule=false">Close</button>
     </p-footer>
@@ -234,6 +240,12 @@
     [minY]="70" [maximizable]="true" [baseZIndex]="10000">
     <form>
       <div class="row" [formGroup]="createForm">
+        <div class="col">
+          <div class="form-group">
+            <label for="formGroupExampleInput">Schedule Id</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" formControlName="studioScheduleId" placeholder="Studio ScheduleId">
+          </div>
+        </div>
         <div class="col">
           <div class="form-group">
             <label for="formGroupExampleInput">Studio Name</label>
@@ -259,9 +271,12 @@
       </div>
     </form>
     <p-footer>
-      <button class="btn btn-sm btn-success" (click)="updateSchedule()" [disabled]="createForm.controls['dateValue'].invalid || createForm.controls['studioName'].invalid">Update</button>
+      <button class="btn btn-sm btn-success" (click)="updateSchedule()" [disabled]="createForm.controls['studioScheduleId'].value?.length == 0 || createForm.controls['dateValue'].invalid || createForm.controls['studioName'].invalid">Update</button>
       &nbsp;&nbsp;&nbsp;
-      <button class="btn btn-sm btn-danger" (click)="displayEditSchedule=false">Close</button>
+      <button class="btn btn-sm btn-danger" (click)="displayEditSchedule=false;intScheduleCreateForm()">Close</button>
     </p-footer>
   </p-dialog>
+</section>
+<section>
+    <p-toast [style]="{marginTop: '80px'}" label="Top Center"></p-toast>
 </section>

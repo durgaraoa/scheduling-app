@@ -19,4 +19,8 @@ export class ScheduleService {
     public updateSchedule(body:any): Observable<any> {
         return this.http.put(this.hostIP + "/schedule", body);
     }
+
+    public getAllSchedules(): Observable<any>{
+        return this.http.get("assets/data/data.json");
+    }
 }

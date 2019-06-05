@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
-import { FormBuilder, FormControl, Validators, FormGroup } from '@angular/forms';
-import { IMyDpOptions } from 'mydatepicker';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Schedule, ScheduleSlot } from '../shared/models/schedule.model';
 import { ScheduleService } from './schedule.service';
 
@@ -9,44 +8,44 @@ import { ScheduleService } from './schedule.service';
     selector: 'app-schedule',
     templateUrl: './schedule.component.html',
     styleUrls: ['schedule.component.scss'],
-    providers: [ScheduleService, ConfirmationService]
+    providers: [ScheduleService, ConfirmationService, MessageService]
 })
 export class ScheduleComponent {
 
     schedulesList: Schedule[] = [];
+    searchSchedulesResultsList: Schedule[] = [];
     createSlotsList: ScheduleSlot[] = [];
     displaySlots: boolean = false;
     displayAddSchedule: boolean = false;
     displayEditSchedule: boolean = false;
     showSlotAdd: boolean = false;
+    noDataMsg:boolean = false;
 
     scheduleObj: any;
 
     searchForm: FormGroup;
     createForm: FormGroup;
     createSlotForm: FormGroup;
+    scheduleObjIndex: any;
 
-    constructor(private service: ScheduleService, private confirmationService: ConfirmationService, private fb: FormBuilder) {
+    constructor(private service: ScheduleService, private confirmationService: ConfirmationService, private fb: FormBuilder,
+        private messageService: MessageService) {
     }
 
     ngOnInit() {
-        this.schedulesList = [
-            {
-                "studioScheduleId": "",
-                "date": "2019-01-28",
-                "studioName": "Studio-1",
-                "studioScheduleSlotList": [
-                    {
-                        "startTime": "00:00:00",
-                        "endTime": "00:00:00",
-                        "faculty": "vdsghGFVS",
-                        "assignerName": "GDVBS"
-                    }
-                ]
-            }
-        ]
         this.initSarchForm();
+        this.intScheduleCreateForm();
         this.initSlot();
+        this.getAllSchedules();
+    }
+
+    getAllSchedules(){
+        this.service.getAllSchedules().subscribe(resData =>{
+            this.schedulesList = resData;
+            if(this.searchSchedulesResultsList.length == 0){
+                this.searchSchedulesResultsList = resData;
+            }
+        })
     }
 
 
@@ -57,15 +56,17 @@ export class ScheduleComponent {
             localDate: [null]
         });
 
+    }
+
+    intScheduleCreateForm(){
         this.createForm = this.fb.group({
             studioName: [null, Validators.required],
-            studioScheduleId: [null],
+            studioScheduleId: [null, Validators.required],
             dateValue: [null, Validators.required],
             localDate: [null],
             date: [null],
             studioScheduleSlotList: []
         });
-
     }
 
     initSlot() {
@@ -79,6 +80,12 @@ export class ScheduleComponent {
         });
     }
 
+    resetSlotCreation(){
+        this.initSlot();
+        this.showSlotAdd = false;
+        this.noDataMsg = false;
+    }
+
 
 
     confirmScheduleDelete(index) {
@@ -86,12 +93,13 @@ export class ScheduleComponent {
             message: 'Are you sure that you want to DELETE the schedule',
             accept: () => {
                 this.schedulesList.splice(index, 1);
-                this.service.updateSchedule(this.schedulesList).subscribe(resData => {
-                    console.log(resData)
-                }, (error:any) => {
-                    console.log('oops', error)
-                    alert("Server:" + error.statusText)
-                })
+                this.messageService.add({severity:'success', summary:'Success', detail:'Schedule Deleted Successfully.'});
+                // this.service.updateSchedule(this.schedulesList).subscribe(resData => {
+                //     console.log(resData)
+                // }, (error:any) => {
+                //     console.log('oops', error)
+                //     alert("Server:" + error.statusText)
+                // })
             }
         });
     }
@@ -113,12 +121,32 @@ export class ScheduleComponent {
         let localDate = this.prepareDateStringFromObject(this.searchForm.controls['dateValue'].value);
         this.searchForm.controls['localDate'].patchValue(localDate);
         console.log(this.searchForm.value);
-        this.service.getSchedules(this.searchForm.value).subscribe(resData => {
-            console.log(resData);
-        }, (error:any) => {
-            console.log('oops', error)
-            alert("Server:" + error.statusText)
-        })
+
+        this.searchSchedulesResultsList = this.schedulesList.filter(
+            item =>
+                ((item.studioName.toUpperCase().indexOf(this.searchForm.value.studioName.toUpperCase()) >= 0) && 
+                (item.date == this.searchForm.value.localDate))
+        )
+
+        if(this.searchSchedulesResultsList.length == 0){
+            this.noDataMsg = true;
+        }
+
+        if(this.searchSchedulesResultsList.length > 0){
+            this.noDataMsg = false;
+        }
+
+        // this.service.getSchedules(this.searchForm.value).subscribe(resData => {
+        //     console.log(resData);
+        // }, (error:any) => {
+        //     console.log('oops', error)
+        //     alert("Server:" + error.statusText)
+        // })
+    }
+
+    resetSearch(){
+        this.initSarchForm();
+        this.searchSchedulesResultsList = this.schedulesList;
     }
 
     displaySlotsFn(schedule) {
@@ -142,31 +170,40 @@ export class ScheduleComponent {
         //     message: 'Are you sure that you want to DELETE the Slot',
         //     accept: () => {
         this.scheduleObj.studioScheduleSlotList.splice(index, 1);
+        this.messageService.add({severity:'success', summary:'Success', detail:'Slot Updated Successfully.'});
         //     }
         // });
-        this.service.updateSchedule(this.scheduleObj).subscribe(resData =>{
-            console.log(resData);   
-        }, (error:any) => {
-            console.log('oops', error)
-            alert("Server:" + error.statusText)
-        })
+        // this.service.updateSchedule(this.scheduleObj).subscribe(resData =>{
+        //     console.log(resData);   
+        // }, (error:any) => {
+        //     console.log('oops', error)
+        //     alert("Server:" + error.statusText)
+        // })
     }
 
     saveSchedule() {
         this.createForm.controls['localDate'].patchValue(this.prepareDateStringFromObject(this.createForm.controls['dateValue'].value));
         this.createForm.controls['studioScheduleSlotList'].patchValue(this.createSlotsList);
+        this.createForm.controls['date'].patchValue(this.createForm.controls['localDate'].value)
         console.log(this.createForm.value)
         this.displayAddSchedule = false;
+        this.createSlotsList = [];
         this.schedulesList.push(this.createForm.value);
-        this.service.saveSchedule(this.createForm.value).subscribe(resData => {
-            console.log(resData);
-        }, (error:any) => {
-            console.log('oops', error)
-            alert("Server:" + error.statusText)
-        })
+        this.searchSchedulesResultsList = this.schedulesList;
+        this.intScheduleCreateForm();
+        this.initSarchForm();
+        this.noDataMsg = false;
+        this.messageService.add({severity:'success', summary:'Success', detail:'Schedule Added Successfully.'});
+        // this.service.saveSchedule(this.createForm.value).subscribe(resData => {
+        //     console.log(resData);
+        // }, (error:any) => {
+        //     console.log('oops', error)
+        //     alert("Server:" + error.statusText)
+        // })
     }
 
-    displayEditFn(item) {
+    displayEditFn(item, index) {
+        this.scheduleObjIndex = index;
         this.displayEditSchedule = true;
         this.scheduleObj = item;
         this.createForm.controls['studioName'].patchValue(item.studioName);
@@ -182,12 +219,16 @@ export class ScheduleComponent {
         this.createForm.controls['studioScheduleSlotList'].patchValue(this.scheduleObj.studioScheduleSlotList);
         this.displayEditSchedule = false;
         console.log(this.createForm.value)
-        this.service.updateSchedule(this.createForm.value).subscribe(resData => {
-            console.log(resData);
-        }, (error:any) => {
-            console.log('oops', error)
-            alert("Server:" + error.statusText)
-        })
+        this.searchSchedulesResultsList[this.scheduleObjIndex].date = this.createForm.controls['date'].value;
+        this.searchSchedulesResultsList[this.scheduleObjIndex].studioName = this.createForm.controls['studioName'].value;
+        this.searchSchedulesResultsList[this.scheduleObjIndex].studioScheduleId = this.createForm.controls['studioScheduleId'].value;
+        this.messageService.add({severity:'success', summary:'Success', detail:'Schedule Updated Successfully.'});
+        // this.service.updateSchedule(this.createForm.value).subscribe(resData => {
+        //     console.log(resData);
+        // }, (error:any) => {  
+        //     console.log('oops', error)
+        //     alert("Server:" + error.statusText)
+        // })
     }
 
     displayAddSlotFn() {
