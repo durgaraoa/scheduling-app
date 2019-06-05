@@ -170,7 +170,6 @@ export class ScheduleComponent {
         //     message: 'Are you sure that you want to DELETE the Slot',
         //     accept: () => {
         this.scheduleObj.studioScheduleSlotList.splice(index, 1);
-        this.messageService.add({severity:'success', summary:'Success', detail:'Slot Updated Successfully.'});
         //     }
         // });
         // this.service.updateSchedule(this.scheduleObj).subscribe(resData =>{
@@ -179,6 +178,10 @@ export class ScheduleComponent {
         //     console.log('oops', error)
         //     alert("Server:" + error.statusText)
         // })
+    }
+
+    deleteInCreateSlotsList(index){
+        this.createSlotsList.splice(index, 1);
     }
 
     saveSchedule() {
@@ -233,6 +236,7 @@ export class ScheduleComponent {
 
     displayAddSlotFn() {
         this.showSlotAdd = true;
+        this.intScheduleCreateForm();
     }
 
     addRowInAddSlots(body) {

@@ -42,8 +42,8 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Date</th>
             <th scope="col">Studio Name</th>
+            <th scope="col">Date</th>
             <th scope="col">Slots</th>
             <th scope="col">Action</th>
             <!-- <th scope="col"></th> -->
@@ -52,8 +52,8 @@
         <tbody *ngFor="let item of searchSchedulesResultsList;index as i;index as in;">
           <tr>
             <th scope="row">{{i+1}}</th>
-            <td>{{item.date}}</td>
             <td>{{item.studioName}}</td>
+            <td>{{item.date}}</td>
             <td><a href="javascript:void(0);" (click)="displaySlotsFn(item)">{{item.studioScheduleSlotList?.length}}</a></td>
             <td><a href="javascript:void(0);" (click)="displayEditFn(item, in)"><i class="fa fa-edit"></i></a> &nbsp;&nbsp;
               <a href="javascript:void(0);" (click)="confirmScheduleDelete(item)"><i class="fa fa-trash"></i></a></td>
@@ -187,7 +187,7 @@
             <td>{{item.endTime}}</td>
             <td>{{item.faculty}}</td>
             <td>{{item.assignerName}}</td>
-            <td><a href="javascript:void(0);" (click)="deleteRowInSlots(item)">Remove</a></td>
+            <td><a href="javascript:void(0);" (click)="deleteInCreateSlotsList(item)">Remove</a></td>
           </tr>
         </tbody>
       </table>
