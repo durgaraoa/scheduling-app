@@ -9,3 +9,5 @@
 5.Add new slots along with the existing slots in a schedule.
 6.Update/delete an existing slot in a schedule.
 
+# Demo:
+URL: https://frost-scheduling-app.herokuapp.com
